@@ -1,14 +1,33 @@
 /** Class to represent Box Shogi board */
 public class Board {
 
+	// add more fields
 	Piece[][] board;
-
 	final int BOARD_SIZE= 5;
 
+	/** Constructor: creates Board object and initializes Pieces in place. */
 	public Board() {
-		// TODO initialize variable board here
 		board= new Piece[BOARD_SIZE][BOARD_SIZE];
-		// need to put starter pieces in their place
+		for (int i= 0; i < BOARD_SIZE; i++ ) { // put starter pieces in place
+			if (i == 0) {
+				board[0][i]= new Piece("n", false, false);
+				board[BOARD_SIZE - 1][BOARD_SIZE - 1 - i]= new Piece("n", true, false);
+			} else if (i == 1) {
+				board[0][i]= new Piece("g", false, false);
+				board[BOARD_SIZE - 1][BOARD_SIZE - 1 - i]= new Piece("g", true, false);
+			} else if (i == 2) {
+				board[0][i]= new Piece("r", false, false);
+				board[BOARD_SIZE - 1][BOARD_SIZE - 1 - i]= new Piece("r", true, false);
+			} else if (i == 3) {
+				board[0][i]= new Piece("s", false, false);
+				board[BOARD_SIZE - 1][BOARD_SIZE - 1 - i]= new Piece("s", true, false);
+			} else {
+				board[0][i]= new Piece("d", false, false);
+				board[1][i]= new Piece("p", false, false);
+				board[BOARD_SIZE - 1][BOARD_SIZE - 1 - i]= new Piece("d", true, false);
+				board[BOARD_SIZE - 2][BOARD_SIZE - 1 - i]= new Piece("p", true, false);
+			}
+		}
 	}
 
 	/* Print board */
@@ -30,7 +49,6 @@ public class Board {
 
 	private String stringifyBoard(String[][] board) {
 		String str= "";
-
 		for (int row= board.length - 1; row >= 0; row-- ) {
 
 			str+= Integer.toString(row + 1) + " |";
@@ -39,9 +57,7 @@ public class Board {
 			}
 			str+= System.getProperty("line.separator");
 		}
-
 		str+= "    a  b  c  d  e" + System.getProperty("line.separator");
-
 		return str;
 	}
 
@@ -54,7 +70,6 @@ public class Board {
 		case 2:
 			return sq + "|";
 		}
-
 		throw new IllegalArgumentException("Board must be an array of strings like \"\", \"P\", or \"+P\"");
 	}
 }
