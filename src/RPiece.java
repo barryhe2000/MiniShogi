@@ -11,17 +11,14 @@ class RPiece extends Piece {
 
     /** Returns whether or not this piece can move from initPos to finalPos on board. */
     @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board) {
-        if (!Piece.checkBounds(initPos, finalPos))
-            return false; //out of bounds or didn't move
-        Piece p= board.getPiece(finalPos[0], finalPos[1]);
-        if (p != null && p.getLower() == getLower())
-            return false; //moving on to a piece controlled by same player
+        if (!Piece.checkBounds(initPos, finalPos) || hitOwnPiece(initPos, finalPos, board))
+            return false;
         int deltaI= Math.abs(initPos[0] - finalPos[0]);
         int deltaJ= Math.abs(initPos[1] - finalPos[1]);
         if (deltaI > 1 || deltaJ > 1)
             return false;
         Piece curr= board.getPiece(initPos[0], initPos[1]);
-        if (getPromoted()) { //Shield
+        if (getPromoted()) {
             if (curr.getLower() && finalPos[1] == initPos[1] - 1
                     && (finalPos[0] == initPos[0] - 1 || finalPos[0] == initPos[0] + 1))
                 return false;

@@ -18,8 +18,8 @@ public abstract class Piece {
      * by the value of pieceType. The value of lower determines if it <br>
      * is a lower or UPPER piece, and the value of promoted determines <br>
      * if the piece is promoted or not. The value of captured determines <br>
-     * whether or not the piece is captured. Drive ("d") and Shield ("s") <br>
-     * pieces cannot be promoted. */
+     * whether or not the piece is captured. Drive and Shield pieces <br>
+     * cannot be promoted. */
     public Piece(String pieceType, boolean lower, boolean promoted, boolean captured) {
         setPieceType(pieceType);
         setLower(lower);
@@ -37,7 +37,7 @@ public abstract class Piece {
      * stripped and player ownership changing sides. */
     protected abstract Piece beenCaptured();
 
-    /** Helper function that checks if the initial and final position of <br>
+    /** Returns true if the initial and final position of <br>
      * pieces being moved does not reach out of the board boundaries and <br>
      * if the initial and final positions are different. */
     protected static boolean checkBounds(int[] initPos, int[] finalPos) {
@@ -45,6 +45,12 @@ public abstract class Piece {
         if (initPos[0] == finalPos[0] && initPos[1] == finalPos[1])
             return false;
         return finalPos[0] >= 0 && finalPos[0] <= 4 && finalPos[1] >= 0 && finalPos[1] <= 4;
+    }
+
+    /** Returns true if one of the player's own pieces is collided into. */
+    protected boolean hitOwnPiece(int[] initPos, int[] finalPos, Board b) {
+        Piece p= b.getPiece(finalPos[0], finalPos[1]);
+        return p != null && p.getLower() == lower;
     }
 
     /** Returns the type of this piece. */

@@ -40,7 +40,7 @@ public class Game {
         upperCaptures= new ArrayList<>();
         lowerCaptures= new ArrayList<>();
         b= new Board(false);
-        moves= null; //unnecessary in interactive mode
+        moves= null;
         lowerTurn= true;
         numTurns= 0;
         gameOver= false;

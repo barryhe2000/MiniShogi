@@ -11,10 +11,7 @@ class NPiece extends Piece {
 
     /** Returns whether or not this piece can move from initPos to finalPos on board. */
     @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board) {
-        if (!Piece.checkBounds(initPos, finalPos))
-            return false;
-        Piece p= board.getPiece(finalPos[0], finalPos[1]);
-        if (p != null && p.getLower() == getLower())
+        if (!Piece.checkBounds(initPos, finalPos) || hitOwnPiece(initPos, finalPos, board))
             return false;
         int deltaI= Math.abs(initPos[0] - finalPos[0]);
         int deltaJ= Math.abs(initPos[1] - finalPos[1]);
