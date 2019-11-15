@@ -10,23 +10,35 @@ class PPiece extends Piece {
     }
 
     /** Returns whether or not this piece can move from initPos to finalPos on board. */
-    @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board) {
+    @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board,
+            boolean behind) {
         if (!Piece.checkBounds(initPos, finalPos) || hitOwnPiece(initPos, finalPos, board))
             return false;
         int deltaI= Math.abs(initPos[0] - finalPos[0]);
         int deltaJ= Math.abs(initPos[1] - finalPos[1]);
         Piece curr= board.getPiece(initPos[0], initPos[1]);
+        boolean previewCheck= true;
         if (getPromoted()) {
             if (curr.getLower() && finalPos[1] == initPos[1] - 1
                     && (finalPos[0] == initPos[0] - 1 || finalPos[0] == initPos[0] + 1))
-                return false;
+                previewCheck= false;
             if (!curr.getLower() && finalPos[1] == initPos[1] + 1
                     && (finalPos[0] == initPos[0] - 1 || finalPos[0] == initPos[0] + 1))
-                return false;
-            return deltaI <= 1 && deltaJ <= 1;
+                previewCheck= false;
+            if (! (deltaI <= 1 && deltaJ <= 1))
+                previewCheck= false;
         }
-        return deltaI == 0 && (finalPos[1] - initPos[1] == 1 && curr.getLower()
-                || initPos[1] - finalPos[1] == 1 && !curr.getLower());
+        if (! (deltaI == 0 && (finalPos[1] - initPos[1] == 1 && curr.getLower()
+                || initPos[1] - finalPos[1] == 1 && !curr.getLower())))
+            previewCheck= false;
+        if (!behind) {
+            Piece behindPiece= pieceBehind(initPos, board);
+            if (behindPiece == null) {
+                return previewCheck;
+            }
+            return behindPiece.canMove(initPos, finalPos, board, true) || previewCheck;
+        }
+        return previewCheck;
     }
 
     /** Promotes this piece and returns if promotion was successful. */

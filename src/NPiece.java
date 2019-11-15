@@ -10,43 +10,52 @@ class NPiece extends Piece {
     }
 
     /** Returns whether or not this piece can move from initPos to finalPos on board. */
-    @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board) {
+    @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board,
+            boolean behind) {
         if (!Piece.checkBounds(initPos, finalPos) || hitOwnPiece(initPos, finalPos, board))
             return false;
         int deltaI= Math.abs(initPos[0] - finalPos[0]);
         int deltaJ= Math.abs(initPos[1] - finalPos[1]);
+        boolean driveCheck= deltaI <= 1 && deltaJ <= 1;
         if (getPromoted()) {
-            if (deltaI <= 1 && deltaJ <= 1)
+            if (driveCheck)
                 return true;
         }
+        boolean notesCheck= true;
         if (! (deltaI == 0 && deltaJ != 0 || deltaI != 0 && deltaJ == 0))
-            return false;
+            notesCheck= false;
         if (deltaI != 0) {
             if (initPos[0] > finalPos[0]) {
                 for (int i= initPos[0] - 1; i > finalPos[0]; i--) {
                     if (board.getPiece(i, initPos[1]) != null)
-                        return false;
+                        notesCheck= false;
                 }
             } else {
                 for (int i= initPos[0] + 1; i < finalPos[0]; i++) {
                     if (board.getPiece(i, initPos[1]) != null)
-                        return false;
+                        notesCheck= false;
                 }
             }
         } else {
             if (initPos[1] > finalPos[1]) {
                 for (int i= initPos[1] - 1; i > finalPos[1]; i--) {
                     if (board.getPiece(initPos[0], i) != null)
-                        return false;
+                        notesCheck= false;
                 }
             } else {
                 for (int i= initPos[1] + 1; i < finalPos[1]; i++) {
                     if (board.getPiece(initPos[0], i) != null)
-                        return false;
+                        notesCheck= false;
                 }
             }
         }
-        return true;
+        if (!behind) {
+            Piece behindPiece= pieceBehind(initPos, board);
+            if (behindPiece == null)
+                return notesCheck;
+            return behindPiece.canMove(initPos, finalPos, board, true) || notesCheck;
+        }
+        return notesCheck;
     }
 
     /** Promotes this piece and returns if promotion was successful. */

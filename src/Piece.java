@@ -28,7 +28,7 @@ public abstract class Piece {
     }
 
     /** Returns whether or not this piece can move from initPos to finalPos on board. */
-    protected abstract boolean canMove(int[] initPos, int[] finalPos, Board board);
+    protected abstract boolean canMove(int[] initPos, int[] finalPos, Board board, boolean behind);
 
     /** Promotes this piece and returns if promotion was successful. */
     protected abstract boolean promote();
@@ -51,6 +51,19 @@ public abstract class Piece {
     protected boolean hitOwnPiece(int[] initPos, int[] finalPos, Board b) {
         Piece p= b.getPiece(finalPos[0], finalPos[1]);
         return p != null && p.getLower() == lower;
+    }
+
+    /** Returns true if there is a piece behind initPos. */
+    protected Piece pieceBehind(int[] initPos, Board b) {
+        int[] finalPos= new int[] {initPos[0], initPos[1] + 1};
+        if (lower) {
+            finalPos= new int[] {initPos[0], initPos[1] - 1};
+        }
+        if (checkBounds(initPos, finalPos)) {
+            Piece potential= b.getPiece(finalPos[0], finalPos[1]);
+            return potential;
+        }
+        return null;
     }
 
     /** Returns the type of this piece. */

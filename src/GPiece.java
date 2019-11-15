@@ -10,7 +10,8 @@ class GPiece extends Piece {
     }
 
     /** Returns whether or not this piece can move from initPos to finalPos on board. */
-    @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board) {
+    @Override protected boolean canMove(int[] initPos, int[] finalPos, Board board,
+            boolean behind) {
         if (!Piece.checkBounds(initPos, finalPos) || hitOwnPiece(initPos, finalPos, board))
             return false;
         int deltaI= Math.abs(initPos[0] - finalPos[0]);
@@ -19,36 +20,43 @@ class GPiece extends Piece {
             if (deltaI <= 1 && deltaJ <= 1)
                 return true;
         }
+        boolean governanceCheck= true;
         if (deltaI != deltaJ)
-            return false;
+            governanceCheck= false;
         boolean right= initPos[0] < finalPos[0] ? true : false;
         boolean up= initPos[1] < finalPos[1] ? true : false;
         if (up) {
             if (right) {
                 for (int i= 1; i < deltaI; i++) {
                     if (board.getPiece(initPos[0] + i, initPos[1] + i) != null)
-                        return false;
+                        governanceCheck= false;
                 }
             } else {
                 for (int i= 1; i < deltaI; i++) {
                     if (board.getPiece(initPos[0] - i, initPos[1] + i) != null)
-                        return false;
+                        governanceCheck= false;
                 }
             }
         } else {
             if (right) {
                 for (int i= 1; i < deltaI; i++) {
                     if (board.getPiece(initPos[0] + i, initPos[1] - i) != null)
-                        return false;
+                        governanceCheck= false;
                 }
             } else {
                 for (int i= 1; i < deltaI; i++) {
                     if (board.getPiece(initPos[0] - i, initPos[1] - i) != null)
-                        return false;
+                        governanceCheck= false;
                 }
             }
         }
-        return true;
+        if (!behind) {
+            Piece behindPiece= pieceBehind(initPos, board);
+            if (behindPiece == null)
+                return governanceCheck;
+            return behindPiece.canMove(initPos, finalPos, board, true) || governanceCheck;
+        }
+        return governanceCheck;
     }
 
     /** Promotes this piece and returns if promotion was successful. */

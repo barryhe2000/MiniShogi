@@ -228,7 +228,7 @@ public class Game {
                 for (int j= 0; j < Board.BOARD_SIZE; j++) {
                     Piece curr= b.getPiece(i, j);
                     if (curr != null && !curr.getLower()) {
-                        if (curr.canMove(new int[] {i, j}, dPosition, b)) {
+                        if (curr.canMove(new int[] {i, j}, dPosition, b, false)) {
                             return true;
                         }
                     }
@@ -250,7 +250,7 @@ public class Game {
                 for (int j= 0; j < Board.BOARD_SIZE; j++) {
                     Piece curr= b.getPiece(i, j);
                     if (curr != null && curr.getLower()) {
-                        if (curr.canMove(new int[] {i, j}, dPosition, b)) {
+                        if (curr.canMove(new int[] {i, j}, dPosition, b, false)) {
                             return true;
                         }
                     }
@@ -377,7 +377,8 @@ public class Game {
      * is promoted and false otherwise. */
     private boolean isLegalMove(int[] init, int[] moveTo, Piece curPiece, boolean pro,
             boolean turn) {
-        if (curPiece == null || curPiece.getLower() != turn || !curPiece.canMove(init, moveTo, b))
+        if (curPiece == null || curPiece.getLower() != turn
+                || !curPiece.canMove(init, moveTo, b, false))
             return false;
         if (pro) {
             if (curPiece.getPromoted())
